@@ -10,9 +10,9 @@ namespace MatchFolio_Authentication.Utils
 {
     public class JwtUtils
     {
-        private readonly IConfiguration? _configuration;
+        private readonly IConfiguration _configuration;
 
-        public JwtUtils(IConfiguration? configuration)
+        public JwtUtils(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -46,9 +46,9 @@ namespace MatchFolio_Authentication.Utils
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim(ClaimTypes.NameIdentifier, user.CodeUser.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.MailUser),
+                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                new Claim(ClaimTypes.Name, user.username),
+                new Claim(ClaimTypes.Email, user.email),
             }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

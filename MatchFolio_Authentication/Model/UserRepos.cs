@@ -12,21 +12,32 @@ namespace MatchFolio_Authentication.Model
             _configuration = configuration;
         }
 
-        public async Task<UserEntity> GetUserAuthAsync(string? mail, string? username, string password)
+        public async Task<UserEntity?> GetUserAuthAsync(string? mail, string? username, string password)
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
 
-            return await oSqlConnection.QuerySingleOrDefaultAsync<UserEntity>(
-                "SELECT * FROM Users WHERE MailUser = @MailUser OR UserName = @Username AND PasswordUser = @PasswordUser", new { MailUser = mail, Username = username, PasswordUser = password });
+            var user =  await oSqlConnection.QuerySingleOrDefaultAsync<UserEntity>(
+                "SELECT * FROM Users WHERE email = @email OR username = @Username", 
+                new { Email = mail, Username = username });
+            
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.password))
+            {
+                return user;
+            }
+
+            return null;
         }
 
         public async Task<UserEntity> InsertUserAsync(UserEntity user, string userId)
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
+
+            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
+
             var insertUser = await oSqlConnection.QueryFirstOrDefaultAsync<UserEntity>(
-                "INSERT INTO Users (NameUser, LastNameUser, Username, MailUser, PasswordUser, CodeUser) " +
-                "VALUES (@NameUser, @LastNameUser, @Username, @MailUser, @PasswordUser, @CodeUser)",
-                new { user.NameUser, user.LastNameUser, user.Username, user.MailUser, user.PasswordUser, CodeUser = userId });
+                "INSERT INTO Users (username, password, firstName, lastName, birthday, email, phoneNumber, userType, cvLink, linkedinLink, XLink, githubLink) " +
+                "VALUES (@Username, @Password, @FirstName, @LastName, @Birthday, @Email, @PhoneNumber, @UserType, @CvLink, @LinkedinLink, @XLink, @GithubLink)",
+                new { user.username, user.password, user.firstName, user.lastName, user.birthday,user.email, user.phoneNumber, user.userType ,user.cvLink, user.linkedinLink, user.XLink, user.githubLink ,id = userId });
             return insertUser;
         }
 
@@ -35,7 +46,7 @@ namespace MatchFolio_Authentication.Model
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
 
             return await oSqlConnection.QuerySingleOrDefaultAsync<UserEntity>(
-                   "SELECT * FROM Users WHERE MailUser = @MailUser OR Username = @Username", new { user.MailUser, user.Username });
+                   "SELECT * FROM Users WHERE email = @Email", new { user.email });
         }
     }
 }

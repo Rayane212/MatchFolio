@@ -23,18 +23,21 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Authentication");
+    });
 }
 
 
-// SignIn 
-app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? mail, string? username, string password) =>  // Pour tester en front supprimer les var username et password des paramétre et mette la route en post 
+app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, SignInModel model) =>
 {
     try
     {
         // Récupération des identifiants de l'utilisateur
-        //string username = http.Request.Form["Username"];
-        //string password = http.Request.Form["Password"];
+        string? mail = model.Mail;
+        string? username = model.Username;
+        string password = model.Password;
 
         // Vérifier que les identifiants sont valides
         using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
@@ -53,7 +56,6 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? 
 
         http.Response.Headers.Add("Authorization", "Bearer " + tokenString);
 
-
         // Retourner le token d'authentification dans la réponse du serveur
         http.Response.StatusCode = 200;
         http.Response.ContentType = "application/json";
@@ -71,7 +73,7 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? 
 
 app.MapPost("/signUp", async (IConfiguration _config, HttpContext http, UserEntity user) =>
 {
-    var userId = user.NameUser.ToUpper();
+    var userId = user.username.ToUpper();
     using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
     var userRepos = new UserRepos(_config);
     var existingUser = await userRepos.ExistingUser(user);
