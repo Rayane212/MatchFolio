@@ -23,6 +23,7 @@ CREATE TABLE Users (
 	birthday DATE DEFAULT NULL, 
     email VARCHAR(100) UNIQUE NOT NULL,
     phoneNumber VARCHAR(20),
+	profilePicture VARCHAR(max),
 	userType BIT,  -- Booléen : Soit il est en recherche d'emplois (userType = 0) soit c'est un Recruteur (userType = 1)
  	cvLink VARCHAR(max),
 	linkedinLink VARCHAR(max),

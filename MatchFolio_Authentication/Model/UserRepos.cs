@@ -35,9 +35,9 @@ namespace MatchFolio_Authentication.Model
             user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
 
             var insertUser = await oSqlConnection.QueryFirstOrDefaultAsync<UserEntity>(
-                "INSERT INTO Users (username, password, firstName, lastName, birthday, email, phoneNumber, userType, cvLink, linkedinLink, XLink, githubLink) " +
-                "VALUES (@Username, @Password, @FirstName, @LastName, @Birthday, @Email, @PhoneNumber, @UserType, @CvLink, @LinkedinLink, @XLink, @GithubLink)",
-                new { user.username, user.password, user.firstName, user.lastName, user.birthday,user.email, user.phoneNumber, user.userType ,user.cvLink, user.linkedinLink, user.XLink, user.githubLink ,id = userId });
+                "INSERT INTO Users (username, password, firstName, lastName, birthday, email, phoneNumber, profilePicture ,userType, cvLink, linkedinLink, XLink, githubLink) " +
+                "VALUES (@Username, @Password, @FirstName, @LastName, @Birthday, @Email, @PhoneNumber, @ProfilePicture, @UserType, @CvLink, @LinkedinLink, @XLink, @GithubLink)",
+                new { user.username, user.password, user.firstName, user.lastName, user.birthday,user.email, user.phoneNumber, user.profilePicture, user.userType ,user.cvLink, user.linkedinLink, user.XLink, user.githubLink ,id = userId });
             return insertUser;
         }
 

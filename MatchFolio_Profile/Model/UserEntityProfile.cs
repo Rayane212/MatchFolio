@@ -1,14 +1,16 @@
-﻿namespace MatchFolio_Profile.Model
+﻿using UtilityLibraries;
+
+namespace MatchFolio_Profile.Model
 {
-    public class UserEntityProfile
+    public class UserEntityProfile : IUser
     {
         public int id { get; set; }
-        public required string username { get; set; }
-        public required string password { get; set; }
-        public required string firstName { get; set; }
-        public required string lastName { get; set; }
+        public string? username { get; set; }
+        public string? password { get; set; }
+        public string? firstName { get; set; }
+        public string? lastName { get; set; }
         public DateTime? birthday { get; set; }
-        public required string email { get; set; }
+        public string? email { get; set; }
         public string? phoneNumber { get; set; }
         public bool? userType { get; set; }
         public string? cvLink { get; set; }

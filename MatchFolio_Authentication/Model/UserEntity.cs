@@ -12,6 +12,7 @@ namespace MatchFolio_Authentication.Model
         public DateTime? birthday { get; set; }
         public required string email { get; set; }
         public string? phoneNumber { get; set; }
+        public string? profilePicture { get; set; }
         public bool? userType { get; set; }
         public string? cvLink { get; set; }
         public string? linkedinLink { get; set; }
