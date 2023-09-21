@@ -1,13 +1,45 @@
 using MatchFolio_Authentication.Model;
 using MatchFolio_Profile.Model;
-using System.Net.Http;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using System.Text;
+using UtilityLibraries;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API Profile", Version = "v1" });
+
+    // Ajoutez ces lignes pour configurer l'authentification JWT dans Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 builder.Services.AddHttpClient("authServiceClient", c =>
 {
@@ -76,6 +108,74 @@ app.MapGet("/matchFolio/userProfile/profile", async (IHttpClientFactory clientFa
     http.Response.StatusCode = (int)response.StatusCode;
     await http.Response.WriteAsync(result);
 });
+
+// Route pour mettre à jour le profil de l'utilisateur
+app.MapPost("/matchFolio/userProfile/updateProfile", async (IHttpClientFactory clientFactory, HttpContext http, UserEntityProfile user) =>
+{
+    var profileServiceClient = clientFactory.CreateClient("profileServiceClient");
+    var token = http.Request.Headers["Authorization"].ToString();
+
+    var request = new HttpRequestMessage(HttpMethod.Post, "userProfile/updateProfile");
+    request.Headers.Add("Authorization", token);
+    request.Content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
+
+    var response = await profileServiceClient.SendAsync(request);
+
+    var result = await response.Content.ReadAsStringAsync();
+    http.Response.StatusCode = (int)response.StatusCode;
+    await http.Response.WriteAsync(result);
+});
+
+// Route pour mettre à jour le mot de passe de l'utilisateur
+app.MapPost("/matchFolio/userProfile/UpdatePassword", async (IHttpClientFactory clientFactory, HttpContext http, string oldPassword, string newPassword, string confirmPassword) =>
+{
+    try
+    {
+        var profileServiceClient = clientFactory.CreateClient("profileServiceClient");
+        var token = http.Request.Headers["Authorization"].ToString();
+
+        var payload = new { oldPassword, newPassword, confirmPassword };
+        var request = new HttpRequestMessage(HttpMethod.Post, "userProfile/UpdatePassword");
+        request.Headers.Add("Authorization", token);
+        request.Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+        var response = await profileServiceClient.SendAsync(request);
+
+        var result = await response.Content.ReadAsStringAsync();
+        http.Response.StatusCode = (int)response.StatusCode;
+        await http.Response.WriteAsync(result);
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
+});
+
+// Route pour supprimer le profil de l'utilisateur
+app.MapDelete("/matchFolio/user/deleteProfile", async (IHttpClientFactory clientFactory, HttpContext http) =>
+{
+    try
+    {
+        var profileServiceClient = clientFactory.CreateClient("profileServiceClient");
+        var token = http.Request.Headers["Authorization"].ToString();
+
+        var requestMessage = new HttpRequestMessage(HttpMethod.Delete, "user/deleteProfile");
+        requestMessage.Headers.Add("Authorization", token);
+        var response = await profileServiceClient.SendAsync(requestMessage);
+
+        var result = await response.Content.ReadAsStringAsync();
+        http.Response.StatusCode = (int)response.StatusCode;
+        await http.Response.WriteAsync(result);
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
+});
+
+
 
 
 

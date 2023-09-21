@@ -117,7 +117,7 @@ app.MapPost("/userProfile/updateProfile", async (IConfiguration _config, HttpCon
     }
 });
 
-app.MapPost("/userProfile/UpdatePassword", async (IConfiguration _config, HttpContext http, string oldPassword, string newPassword, string confirmPassword) =>
+app.MapPost("/userProfile/UpdatePassword", async (IConfiguration _config, HttpContext http, UpdatePasswordModel updatePassword) =>
 {
     try
     {
@@ -126,17 +126,12 @@ app.MapPost("/userProfile/UpdatePassword", async (IConfiguration _config, HttpCo
         var userId = int.Parse(claims[ClaimTypes.NameIdentifier]);
         var userRepos = new UserReposProfile(_config);
 
-
-        //var oldPassword = http.Request.Form["OldPassword"];
-        //var newPassword = http.Request.Form["NewPassword"];
-        //var confirmPassword = http.Request.Form["ConfirmPassword"];
-
-        if (newPassword != confirmPassword)
+        if (updatePassword.newPassword != updatePassword.confirmPassword)
         {
             return Results.BadRequest("Le nouveau mot de passe et la confirmation ne correspondent pas.");
         }
 
-        var success = await userRepos.UpdatePassword(userId, oldPassword, newPassword);
+        var success = await userRepos.UpdatePassword(userId, updatePassword.oldPassword, updatePassword.newPassword);
         if (success)
         {
             return Results.Ok("Mot de passe modifié avec succès.");
