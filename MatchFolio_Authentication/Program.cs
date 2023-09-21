@@ -1,12 +1,8 @@
 using MatchFolio_Authentication.Model;
 using System.Data.SqlClient;
-using Dapper;
 using System.Security.Claims;
-using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using MatchFolio_Authentication.Utils;
+using UtilityLibraries;
 
 var builder = WebApplication.CreateBuilder(args);
 

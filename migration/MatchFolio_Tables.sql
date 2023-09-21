@@ -20,7 +20,7 @@ CREATE TABLE Users (
     password VARCHAR(max) NOT NULL,
     firstName VARCHAR(50),
     lastName VARCHAR(50),
-	birthday DATE, 
+	birthday DATE DEFAULT NULL, 
     email VARCHAR(100) UNIQUE NOT NULL,
     phoneNumber VARCHAR(20),
 	userType BIT,  -- Booléen : Soit il est en recherche d'emplois (userType = 0) soit c'est un Recruteur (userType = 1)

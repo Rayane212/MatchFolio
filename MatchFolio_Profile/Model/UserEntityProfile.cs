@@ -1,8 +1,6 @@
-﻿using UtilityLibraries;
-
-namespace MatchFolio_Authentication.Model
+﻿namespace MatchFolio_Profile.Model
 {
-    public class UserEntity : IUser
+    public class UserEntityProfile
     {
         public int id { get; set; }
         public required string username { get; set; }

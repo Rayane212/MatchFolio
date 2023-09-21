@@ -2,10 +2,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MatchFolio_Authentication.Model;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 
-namespace MatchFolio_Authentication.Utils
+namespace UtilityLibraries
 
 {
     public class JwtUtils
@@ -16,6 +16,7 @@ namespace MatchFolio_Authentication.Utils
         {
             _configuration = configuration;
         }
+
         public static Dictionary<string, string> DecodeJwt(string tokenString, string secret)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -38,7 +39,7 @@ namespace MatchFolio_Authentication.Utils
             return result;
         }
 
-        public string CreateToken(UserEntity user)
+        public string CreateToken(IUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["JwtConfig:Secret"]);
@@ -46,10 +47,10 @@ namespace MatchFolio_Authentication.Utils
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
-                new Claim(ClaimTypes.Name, user.username),
-                new Claim(ClaimTypes.Email, user.email),
-            }),
+                    new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                    new Claim(ClaimTypes.Name, user.username),
+                    new Claim(ClaimTypes.Email, user.email),
+                }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -57,6 +58,5 @@ namespace MatchFolio_Authentication.Utils
             var tokenString = tokenHandler.WriteToken(token);
             return tokenString;
         }
-
     }
 }
