@@ -48,7 +48,7 @@ builder.Services.AddHttpClient("authServiceClient", c =>
 
 builder.Services.AddHttpClient("profileServiceClient", c =>
 {
-    c.BaseAddress = new Uri("https://localhost:7138/"); 
+    c.BaseAddress = new Uri("https://localhost:7138/");
 });
 
 var app = builder.Build();
@@ -66,64 +66,107 @@ if (app.Environment.IsDevelopment())
 // Route pour s'inscrire
 app.MapPost("/matchFolio/signUp", async (IHttpClientFactory clientFactory, HttpContext http, UserEntity user) =>
 {
-    var authServiceClient = clientFactory.CreateClient("authServiceClient");
-    var response = await authServiceClient.PostAsJsonAsync("signUp", user);
-    var result = await response.Content.ReadAsStringAsync();
-    http.Response.StatusCode = (int)response.StatusCode;
-    await http.Response.WriteAsync(result);
+    try
+    {
+        var authServiceClient = clientFactory.CreateClient("authServiceClient");
+        var response = await authServiceClient.PostAsJsonAsync("signUp", user);
+        var result = await response.Content.ReadAsStringAsync();
+        http.Response.StatusCode = (int)response.StatusCode;
+        await http.Response.WriteAsync(result);
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
 });
 
 // Route pour se connecter
 app.MapPost("/matchFolio/signIn", async (IHttpClientFactory clientFactory, HttpContext http, string? mail, string? username, string password) =>
 {
-    var authServiceClient = clientFactory.CreateClient("authServiceClient");
-    var payload = new { mail, username, password };
-    var response = await authServiceClient.PostAsJsonAsync("signIn", payload);
-    var result = await response.Content.ReadAsStringAsync();
-    http.Response.StatusCode = (int)response.StatusCode;
-    await http.Response.WriteAsync(result);
+    try
+    {
+        var authServiceClient = clientFactory.CreateClient("authServiceClient");
+        var payload = new { mail, username, password };
+        var response = await authServiceClient.PostAsJsonAsync("signIn", payload);
+        var result = await response.Content.ReadAsStringAsync();
+        http.Response.StatusCode = (int)response.StatusCode;
+        await http.Response.WriteAsync(result);
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
+
 });
 
 // Route pour se déconnecter
 app.MapPost("/matchFolio/logout", async (IHttpClientFactory clientFactory, HttpContext http) =>
 {
-    var authServiceClient = clientFactory.CreateClient("authServiceClient");
-    var token = http.Request.Headers["Authorization"].ToString();
-    var response = await authServiceClient.PostAsJsonAsync("logout", new { token });
-    var result = await response.Content.ReadAsStringAsync();
-    http.Response.StatusCode = (int)response.StatusCode;
-    await http.Response.WriteAsync(result);
+    try
+    {
+        var authServiceClient = clientFactory.CreateClient("authServiceClient");
+        var token = http.Request.Headers["Authorization"].ToString();
+        var response = await authServiceClient.PostAsJsonAsync("logout", new { token });
+        var result = await response.Content.ReadAsStringAsync();
+        http.Response.StatusCode = (int)response.StatusCode;
+        await http.Response.WriteAsync(result);
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
+
 });
 
 app.MapGet("/matchFolio/userProfile/profile", async (IHttpClientFactory clientFactory, HttpContext http) =>
 {
-    var profileServiceClient = clientFactory.CreateClient("profileServiceClient");
-    var token = http.Request.Headers["Authorization"].ToString();
+    try
+    {
+        var profileServiceClient = clientFactory.CreateClient("profileServiceClient");
+        var token = http.Request.Headers["Authorization"].ToString();
 
-    var requestMessage = new HttpRequestMessage(HttpMethod.Get, "userProfile/profile");
-    requestMessage.Headers.Add("Authorization", token);
-    var response = await profileServiceClient.SendAsync(requestMessage);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Get, "userProfile/profile");
+        requestMessage.Headers.Add("Authorization", token);
+        var response = await profileServiceClient.SendAsync(requestMessage);
 
-    var result = await response.Content.ReadAsStringAsync();
-    http.Response.StatusCode = (int)response.StatusCode;
-    await http.Response.WriteAsync(result);
+        var result = await response.Content.ReadAsStringAsync();
+        http.Response.StatusCode = (int)response.StatusCode;
+        await http.Response.WriteAsync(result);
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
 });
 
 // Route pour mettre à jour le profil de l'utilisateur
 app.MapPost("/matchFolio/userProfile/updateProfile", async (IHttpClientFactory clientFactory, HttpContext http, UserEntityProfile user) =>
 {
-    var profileServiceClient = clientFactory.CreateClient("profileServiceClient");
-    var token = http.Request.Headers["Authorization"].ToString();
+    try
+    {
+        var profileServiceClient = clientFactory.CreateClient("profileServiceClient");
+        var token = http.Request.Headers["Authorization"].ToString();
 
-    var request = new HttpRequestMessage(HttpMethod.Post, "userProfile/updateProfile");
-    request.Headers.Add("Authorization", token);
-    request.Content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Post, "userProfile/updateProfile");
+        request.Headers.Add("Authorization", token);
+        request.Content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
 
-    var response = await profileServiceClient.SendAsync(request);
+        var response = await profileServiceClient.SendAsync(request);
 
-    var result = await response.Content.ReadAsStringAsync();
-    http.Response.StatusCode = (int)response.StatusCode;
-    await http.Response.WriteAsync(result);
+        var result = await response.Content.ReadAsStringAsync();
+        http.Response.StatusCode = (int)response.StatusCode;
+        await http.Response.WriteAsync(result);
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
+
 });
 
 // Route pour mettre à jour le mot de passe de l'utilisateur

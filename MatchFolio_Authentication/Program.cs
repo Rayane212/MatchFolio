@@ -69,40 +69,59 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, SignInMo
 
 app.MapPost("/signUp", async (IConfiguration _config, HttpContext http, UserEntity user) =>
 {
-    var userId = user.username.ToUpper();
-    using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
-    var userRepos = new UserRepos(_config);
-    var existingUser = await userRepos.ExistingUser(user);
-    if (existingUser != null)
+    try
     {
-        http.Response.StatusCode = 409; // Code HTTP 409 Conflict
-        await http.Response.WriteAsync("");
+        var userId = user.username.ToUpper();
+        using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
+        var userRepos = new UserRepos(_config);
+        var existingUser = await userRepos.ExistingUser(user);
+        if (existingUser != null)
+        {
+            http.Response.StatusCode = 409; // Code HTTP 409 Conflict
+            await http.Response.WriteAsync("");
+            return;
+        }
+        await userRepos.InsertUserAsync(user, userId);
+
+        http.Response.StatusCode = 200; // Code HTTP 200 OK
+        await http.Response.WriteAsync($"{userId} user successfully created.");
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500; // Code HTTP 500 Internal Server Error
+        await http.Response.WriteAsync(ex.Message);
         return;
     }
-    await userRepos.InsertUserAsync(user, userId);
 
-    http.Response.StatusCode = 200; // Code HTTP 200 OK
-    await http.Response.WriteAsync($"{userId} user successfully created.");
 });
 
 
 // logout
 app.MapPost("/logout", async (HttpContext http, IConfiguration _config) =>
 {
-    var token = http.Request.Headers["Authorization"].ToString().Split(" ")[1];
-    var claims = JwtUtils.DecodeJwt(token, _config["JwtConfig:Secret"]);
-    var userId = claims[ClaimTypes.NameIdentifier];
-    if (token != "")
+    try
     {
-        http.Request.Headers.Remove("Authorization");
-        http.Response.Redirect("/");
-        http.Response.StatusCode = 200;
-        await http.Response.WriteAsync($"Utilisateur {userId} a été déconnecté.");
+        var token = http.Request.Headers["Authorization"].ToString().Split(" ")[1];
+        var claims = JwtUtils.DecodeJwt(token, _config["JwtConfig:Secret"]);
+        var userId = claims[ClaimTypes.NameIdentifier];
+        if (token != "")
+        {
+            http.Request.Headers.Remove("Authorization");
+            http.Response.Redirect("/");
+            http.Response.StatusCode = 200;
+            await http.Response.WriteAsync($"Utilisateur {userId} a été déconnecté.");
+        }
+        else
+        {
+            http.Response.StatusCode = 409;
+            await http.Response.WriteAsync("Il y'a eu un problème.");
+            return;
+        }
     }
-    else
+    catch (Exception ex)
     {
-        http.Response.StatusCode = 409;
-        await http.Response.WriteAsync("Il y'a eu un problème.");
+        http.Response.StatusCode = 500; // Code HTTP 500 Internal Server Error
+        await http.Response.WriteAsync(ex.Message);
         return;
     }
 });

@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchFolio", "MatchFolio\Ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchFolio_Authentication", "MatchFolio_Authentication\MatchFolio_Authentication.csproj", "{FA0CAF5B-1205-44C7-A618-A2A9F6AC1D36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchFolio_Profile", "MatchFolio_Profile\MatchFolio_Profile.csproj", "{607D053B-FE04-4CF9-9BD4-75477DEEA42F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchFolio_Profile", "MatchFolio_Profile\MatchFolio_Profile.csproj", "{607D053B-FE04-4CF9-9BD4-75477DEEA42F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibraries", "UtilityLibraries\UtilityLibraries.csproj", "{458936C3-FADC-4D80-83FC-CB5C42FA19F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilityLibraries", "UtilityLibraries\UtilityLibraries.csproj", "{458936C3-FADC-4D80-83FC-CB5C42FA19F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchFolio_Skills", "MatchFolio_Skills\MatchFolio_Skills.csproj", "{3EE9F612-AA71-4E3B-A3C3-20D2172297A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{458936C3-FADC-4D80-83FC-CB5C42FA19F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{458936C3-FADC-4D80-83FC-CB5C42FA19F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{458936C3-FADC-4D80-83FC-CB5C42FA19F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EE9F612-AA71-4E3B-A3C3-20D2172297A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EE9F612-AA71-4E3B-A3C3-20D2172297A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EE9F612-AA71-4E3B-A3C3-20D2172297A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EE9F612-AA71-4E3B-A3C3-20D2172297A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
