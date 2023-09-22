@@ -121,6 +121,7 @@ app.MapPost("/matchFolio/logout", async (IHttpClientFactory clientFactory, HttpC
 
 });
 
+// Route pour récupérerle profil de l'utilisateur
 app.MapGet("/matchFolio/userProfile/profile", async (IHttpClientFactory clientFactory, HttpContext http) =>
 {
     try
