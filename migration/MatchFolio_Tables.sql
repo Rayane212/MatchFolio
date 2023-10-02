@@ -26,7 +26,7 @@ CREATE TABLE Users (
     email VARCHAR(100) UNIQUE NOT NULL,
     phoneNumber VARCHAR(20),
 	profilePicture VARCHAR(max),
-	userType BIT,  -- Booléen : Soit il est en recherche d'emplois (userType = false) soit c'est un Recruteur (userType = true)
+	userType BIT,  
  	cvLink VARCHAR(max),
 	linkedinLink VARCHAR(max),
 	XLink VARCHAR(max), 
@@ -47,7 +47,9 @@ CREATE TABLE Addresses (
 
 CREATE TABLE Portfolios (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    userId INT
+    userId INT,
+	title VARCHAR(50), 
+	description VARCHAR(max) 
 );
 
 CREATE TABLE Reviews (
