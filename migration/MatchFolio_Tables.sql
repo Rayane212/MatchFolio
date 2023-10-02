@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS Portfolios;
 
 CREATE TABLE Users (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(max) NOT NULL,
     firstName VARCHAR(50),
     lastName VARCHAR(50),
